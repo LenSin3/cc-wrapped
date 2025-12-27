@@ -1,6 +1,6 @@
 {
   "name": "cc-wrapped",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Your year in code, wrapped. Visualize your git history and Claude Code usage in a beautiful shareable format.",
   "main": "src/index.js",
   "bin": {
