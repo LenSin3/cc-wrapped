@@ -181,6 +181,38 @@ function getClaudeStats() {
   }
 }
 
+// Smart title case for project names
+function titleCase(str) {
+  if (!str) return str;
+
+  const hasUpperCase = /[A-Z]/.test(str);
+  const hasLowerCase = /[a-z]/.test(str);
+  const hasSeparators = str.includes('-') || str.includes('_');
+
+  // PascalCase like DocuProc - keep as-is
+  if (hasUpperCase && hasLowerCase && !hasSeparators && str[0] === str[0].toUpperCase()) {
+    return str;
+  }
+
+  // camelCase like myProject - add spaces and capitalize
+  if (hasUpperCase && hasLowerCase && !hasSeparators) {
+    return str.charAt(0).toUpperCase() + str.slice(1).replace(/([a-z])([A-Z])/g, '$1 $2');
+  }
+
+  // kebab-case or snake_case - replace separators and title case
+  let result = str.replace(/[-_]/g, ' ');
+  result = result.replace(/\b\w/g, c => c.toUpperCase());
+
+  // Handle common abbreviations that should be all caps
+  const allCaps = ['api', 'ui', 'cli', 'sdk', 'ai', 'ml', 'db', 'js', 'ts', 'css', 'html', 'http', 'url', 'id', 'cc'];
+  allCaps.forEach(word => {
+    const regex = new RegExp(`\\b${word}\\b`, 'gi');
+    result = result.replace(regex, word.toUpperCase());
+  });
+
+  return result;
+}
+
 // Format numbers
 function formatNumber(num) {
   if (num >= 1e9) return (num / 1e9).toFixed(1) + 'B';
@@ -193,7 +225,7 @@ function formatNumber(num) {
 function generateHTML(gitStats, claudeStats, options) {
   const { tokensOnly, gitOnly, year, repoName } = options;
 
-  const title = repoName || gitStats?.repoName || 'Your Code';
+  const title = titleCase(repoName || gitStats?.repoName) || 'Your Code';
 
   return `<!DOCTYPE html>
 <html lang="en">
