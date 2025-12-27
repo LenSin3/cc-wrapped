@@ -724,7 +724,7 @@ async function generateWrapped(options) {
 
   // Open in browser
   if (openBrowser) {
-    console.log('🌐 Opening in browser...');
+    console.log(`🌐 Opening in browser (or open manually: ${fullPath})`);
     try {
       const open = (await import('open')).default;
       await open(fullPath);
@@ -740,7 +740,7 @@ async function generateWrapped(options) {
           execSync(`xdg-open "${fullPath}"`, { stdio: 'ignore' });
         }
       } catch (fallbackErr) {
-        console.log(`   Could not open browser automatically. Please open: ${fullPath}`);
+        // Message already shown above with file path
       }
     }
   }
