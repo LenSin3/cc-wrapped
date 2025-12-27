@@ -725,8 +725,24 @@ async function generateWrapped(options) {
   // Open in browser
   if (openBrowser) {
     console.log('🌐 Opening in browser...');
-    const open = (await import('open')).default;
-    await open(fullPath);
+    try {
+      const open = (await import('open')).default;
+      await open(fullPath);
+    } catch (e) {
+      // Fallback to native commands if open package fails
+      try {
+        const platform = process.platform;
+        if (platform === 'win32') {
+          execSync(`start "" "${fullPath}"`, { stdio: 'ignore' });
+        } else if (platform === 'darwin') {
+          execSync(`open "${fullPath}"`, { stdio: 'ignore' });
+        } else {
+          execSync(`xdg-open "${fullPath}"`, { stdio: 'ignore' });
+        }
+      } catch (fallbackErr) {
+        console.log(`   Could not open browser automatically. Please open: ${fullPath}`);
+      }
+    }
   }
 
   console.log('\n🎉 Done! Share your wrapped on social media!\n');
