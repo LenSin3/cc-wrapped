@@ -208,7 +208,7 @@ function generateHTML(gitStats, claudeStats, options) {
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            background: linear-gradient(135deg, #0d0d0d 0%, #1a1a1a 50%, #0d0d0d 100%);
             min-height: 100vh;
             color: #fff;
             padding: 40px 20px;
@@ -220,7 +220,7 @@ function generateHTML(gitStats, claudeStats, options) {
         .header h1 {
             font-size: 3.5rem;
             font-weight: 900;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background: linear-gradient(135deg, #ffffff 0%, #a0a0a0 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -230,46 +230,44 @@ function generateHTML(gitStats, claudeStats, options) {
             font-size: 5rem;
             font-weight: 900;
             color: #fff;
-            text-shadow: 0 0 40px rgba(102, 126, 234, 0.5);
+            text-shadow: 0 0 40px rgba(255, 255, 255, 0.2);
         }
-        .header .subtitle { font-size: 1.2rem; color: #a0aec0; margin-top: 10px; }
+        .header .subtitle { font-size: 1.2rem; color: #888; margin-top: 10px; }
 
         .card {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(10px);
             border-radius: 24px;
             padding: 30px;
             margin-bottom: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
-        .card h2 { font-size: 1.5rem; margin-bottom: 20px; color: #f093fb; }
+        .card h2 { font-size: 1.5rem; margin-bottom: 20px; color: #fff; }
 
         .big-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
         @media (min-width: 600px) { .big-stats { grid-template-columns: repeat(4, 1fr); } }
 
         .stat-box {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+            background: rgba(255, 255, 255, 0.05);
             border-radius: 16px;
             padding: 24px;
             text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
         .stat-box .number {
             font-size: 2rem;
             font-weight: 800;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: #fff;
         }
-        .stat-box .label { font-size: 0.9rem; color: #a0aec0; margin-top: 5px; }
+        .stat-box .label { font-size: 0.9rem; color: #666; margin-top: 5px; }
 
         .bar-chart { margin: 15px 0; }
         .bar-row { display: flex; align-items: center; margin-bottom: 12px; }
-        .bar-label { width: 100px; font-size: 0.9rem; color: #a0aec0; }
+        .bar-label { width: 100px; font-size: 0.9rem; color: #888; }
         .bar-container {
             flex: 1;
             height: 24px;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
             border-radius: 12px;
             overflow: hidden;
             margin: 0 15px;
@@ -283,49 +281,48 @@ function generateHTML(gitStats, claudeStats, options) {
             font-size: 0.8rem;
             font-weight: 600;
         }
-        .bar.purple { background: linear-gradient(90deg, #667eea 0%, #764ba2 100%); }
-        .bar.pink { background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%); }
-        .bar.blue { background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%); }
-        .bar.green { background: linear-gradient(90deg, #38f9d7 0%, #43e97b 100%); }
-        .bar.orange { background: linear-gradient(90deg, #fa709a 0%, #fee140 100%); }
+        .bar.purple { background: linear-gradient(90deg, #404040 0%, #606060 100%); }
+        .bar.pink { background: linear-gradient(90deg, #505050 0%, #707070 100%); }
+        .bar.blue { background: linear-gradient(90deg, #3a3a3a 0%, #5a5a5a 100%); }
+        .bar.green { background: linear-gradient(90deg, #454545 0%, #656565 100%); }
+        .bar.orange { background: linear-gradient(90deg, #4a4a4a 0%, #6a6a6a 100%); }
         .bar-value { font-size: 0.9rem; color: #fff; min-width: 50px; text-align: right; }
 
         .highlight-box {
-            background: linear-gradient(135deg, rgba(240, 147, 251, 0.2) 0%, rgba(245, 87, 108, 0.2) 100%);
+            background: rgba(255, 255, 255, 0.05);
             border-radius: 16px;
             padding: 20px;
             text-align: center;
             margin-top: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
-        .highlight-box .label { color: #a0aec0; font-size: 0.9rem; }
-        .highlight-box .value { font-size: 1.5rem; font-weight: 700; color: #f093fb; margin-top: 5px; }
+        .highlight-box .label { color: #888; font-size: 0.9rem; }
+        .highlight-box .value { font-size: 1.5rem; font-weight: 700; color: #fff; margin-top: 5px; }
 
         .achievements { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
         .achievement {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.03);
             border-radius: 12px;
             padding: 15px;
             display: flex;
             align-items: center;
             gap: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
         .achievement .emoji { font-size: 1.8rem; }
         .achievement .text { font-size: 0.85rem; }
         .achievement .title { font-weight: 700; color: #fff; }
-        .achievement .desc { color: #a0aec0; font-size: 0.8rem; }
+        .achievement .desc { color: #888; font-size: 0.8rem; }
 
         .footer { text-align: center; margin-top: 50px; padding: 30px; }
-        .footer .message { font-size: 1.1rem; color: #a0aec0; margin-bottom: 10px; }
+        .footer .message { font-size: 1.1rem; color: #888; margin-bottom: 10px; }
         .footer .cta {
             font-size: 2rem;
             font-weight: 800;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: #fff;
         }
-        .footer .credit { font-size: 0.8rem; color: #667eea; margin-top: 20px; }
-        .footer .credit a { color: #f093fb; text-decoration: none; }
+        .footer .credit { font-size: 0.8rem; color: #555; margin-top: 20px; }
+        .footer .credit a { color: #888; text-decoration: none; }
 
         @media print {
             body { background: #1a1a2e; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -468,8 +465,8 @@ function generateGitSections(stats) {
     <div class="card">
       <h2>Claude Code Partnership</h2>
       <div style="display: flex; align-items: center; justify-content: center; gap: 20px; margin-top: 20px;">
-        <div style="font-size: 3rem; font-weight: 900; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">${stats.claudePercentage}%</div>
-        <div style="color: #a0aec0;">
+        <div style="font-size: 3rem; font-weight: 900; color: #fff;">${stats.claudePercentage}%</div>
+        <div style="color: #888;">
           <strong style="color: #fff;">${stats.claudeCommits} commits</strong><br>
           made with Claude Code
         </div>
