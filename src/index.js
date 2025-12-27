@@ -158,7 +158,7 @@ function getGitStats(year) {
 }
 
 // Get Claude Code stats
-function getClaudeStats() {
+function getClaudeStats(year) {
   const statsPath = path.join(os.homedir(), '.claude', 'stats-cache.json');
 
   if (!fs.existsSync(statsPath)) {
@@ -167,38 +167,50 @@ function getClaudeStats() {
 
   try {
     const data = JSON.parse(fs.readFileSync(statsPath, 'utf-8'));
+    const yearStr = year.toString();
 
-    // Get model usage
-    const modelUsage = data.modelUsage || {};
-    let totalInput = 0, totalOutput = 0, totalCacheRead = 0, totalCacheCreation = 0;
-    let modelName = 'Unknown';
+    // Filter daily activity by year
+    const dailyActivity = (data.dailyActivity || []).filter(d => d.date && d.date.startsWith(yearStr));
 
-    for (const [model, usage] of Object.entries(modelUsage)) {
-      modelName = model.replace(/-\d+$/, '').replace('claude-', 'Claude ').replace('-', ' ');
-      totalInput += usage.inputTokens || 0;
-      totalOutput += usage.outputTokens || 0;
-      totalCacheRead += usage.cacheReadInputTokens || 0;
-      totalCacheCreation += usage.cacheCreationInputTokens || 0;
+    // Filter daily tokens by year
+    const dailyTokens = (data.dailyModelTokens || []).filter(d => d.date && d.date.startsWith(yearStr));
+
+    // If no data for this year, return null
+    if (dailyActivity.length === 0 && dailyTokens.length === 0) {
+      return null;
     }
 
-    const totalTokens = totalInput + totalOutput + totalCacheRead + totalCacheCreation;
+    // Calculate tokens from daily data for the specified year
+    let totalTokens = 0;
+    let modelName = 'Claude';
 
-    // Daily activity
-    const dailyActivity = data.dailyActivity || [];
-    const totalMessages = data.totalMessages || dailyActivity.reduce((sum, d) => sum + d.messageCount, 0);
+    dailyTokens.forEach(day => {
+      for (const [model, tokens] of Object.entries(day.tokensByModel || {})) {
+        totalTokens += tokens;
+        modelName = model.replace(/-\d+$/, '').replace('claude-', 'Claude ').replace('-', ' ');
+      }
+    });
+
+    // Calculate activity stats from filtered data
+    const totalMessages = dailyActivity.reduce((sum, d) => sum + (d.messageCount || 0), 0);
     const totalToolCalls = dailyActivity.reduce((sum, d) => sum + (d.toolCallCount || 0), 0);
-    const totalSessions = data.totalSessions || dailyActivity.length;
+    const totalSessions = dailyActivity.reduce((sum, d) => sum + (d.sessionCount || 0), 0);
 
-    // Most active day
+    // Most active day (from filtered data)
     const mostActiveDay = dailyActivity.reduce((max, d) =>
       d.messageCount > (max?.messageCount || 0) ? d : max, null);
 
+    // If we have no meaningful data, return null
+    if (totalMessages === 0 && totalTokens === 0) {
+      return null;
+    }
+
     return {
       totalTokens,
-      inputTokens: totalInput,
-      outputTokens: totalOutput,
-      cacheReadTokens: totalCacheRead,
-      cacheCreationTokens: totalCacheCreation,
+      inputTokens: 0, // Not available in daily breakdown
+      outputTokens: 0,
+      cacheReadTokens: 0,
+      cacheCreationTokens: 0,
       totalMessages,
       totalToolCalls,
       totalSessions,
@@ -697,17 +709,17 @@ async function generateWrapped(options) {
 
   // Get Claude stats if needed
   if (!gitOnly) {
-    const claudeSpinner = new Spinner('Looking for Claude Code stats...');
+    const claudeSpinner = new Spinner(`Looking for Claude Code stats for ${year}...`);
     claudeSpinner.start();
-    claudeStats = getClaudeStats();
+    claudeStats = getClaudeStats(year);
     if (claudeStats) {
-      claudeSpinner.succeed(`Found ${formatNumber(claudeStats.totalTokens)} tokens used`);
+      claudeSpinner.succeed(`Found ${formatNumber(claudeStats.totalTokens)} tokens used in ${year}`);
     } else {
       if (tokensOnly) {
-        claudeSpinner.fail('No Claude Code stats found at ~/.claude/stats-cache.json');
+        claudeSpinner.fail(`No Claude Code stats found for ${year}`);
         process.exit(1);
       }
-      claudeSpinner.succeed('No Claude Code stats found (that\'s okay!)');
+      claudeSpinner.succeed(`No Claude Code stats found for ${year} (that's okay!)`);
     }
   }
 
