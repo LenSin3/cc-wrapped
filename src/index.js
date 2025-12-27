@@ -3,6 +3,40 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 
+// Spinner for progress indication
+class Spinner {
+  constructor(message) {
+    this.frames = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
+    this.message = message;
+    this.current = 0;
+    this.interval = null;
+  }
+
+  start() {
+    process.stdout.write(`${this.frames[0]} ${this.message}`);
+    this.interval = setInterval(() => {
+      this.current = (this.current + 1) % this.frames.length;
+      process.stdout.clearLine?.(0);
+      process.stdout.cursorTo?.(0);
+      process.stdout.write(`${this.frames[this.current]} ${this.message}`);
+    }, 80);
+  }
+
+  succeed(text) {
+    clearInterval(this.interval);
+    process.stdout.clearLine?.(0);
+    process.stdout.cursorTo?.(0);
+    console.log(`✓ ${text || this.message}`);
+  }
+
+  fail(text) {
+    clearInterval(this.interval);
+    process.stdout.clearLine?.(0);
+    process.stdout.cursorTo?.(0);
+    console.log(`✗ ${text || this.message}`);
+  }
+}
+
 // Helper to run git commands
 function git(cmd) {
   try {
@@ -654,30 +688,34 @@ async function generateWrapped(options) {
       }
       console.log('⚠️  Not a git repository. Skipping git stats.');
     } else {
-      console.log('📊 Analyzing git history...');
+      const gitSpinner = new Spinner('Analyzing git history...');
+      gitSpinner.start();
       gitStats = getGitStats(year);
-      console.log(`   Found ${gitStats.totalCommits} commits`);
+      gitSpinner.succeed(`Found ${gitStats.totalCommits} commits`);
     }
   }
 
   // Get Claude stats if needed
   if (!gitOnly) {
-    console.log('🤖 Looking for Claude Code stats...');
+    const claudeSpinner = new Spinner('Looking for Claude Code stats...');
+    claudeSpinner.start();
     claudeStats = getClaudeStats();
     if (claudeStats) {
-      console.log(`   Found ${formatNumber(claudeStats.totalTokens)} tokens used`);
+      claudeSpinner.succeed(`Found ${formatNumber(claudeStats.totalTokens)} tokens used`);
     } else {
       if (tokensOnly) {
-        console.error('❌ No Claude Code stats found at ~/.claude/stats-cache.json');
+        claudeSpinner.fail('No Claude Code stats found at ~/.claude/stats-cache.json');
         process.exit(1);
       }
-      console.log('   No Claude Code stats found (that\'s okay!)');
+      claudeSpinner.succeed('No Claude Code stats found (that\'s okay!)');
     }
   }
 
   // Generate HTML
-  console.log('✨ Generating wrapped...');
+  const genSpinner = new Spinner('Generating wrapped...');
+  genSpinner.start();
   const html = generateHTML(gitStats, claudeStats, { ...options, repoName });
+  genSpinner.succeed('Wrapped generated!');
 
   // Write file
   const fullPath = path.resolve(outputPath);
