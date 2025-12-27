@@ -2,7 +2,7 @@
 
 Your year in code, wrapped. Visualize your git history and Claude Code usage in a beautiful, shareable format.
 
-![cc-wrapped](https://img.shields.io/npm/v/cc-wrapped?style=flat-square)
+![cc-wrapped](https://img.shields.io/npm/v/@lensin3-npm/cc-wrapped?style=flat-square)
 ![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)
 
 ## Features
@@ -16,10 +16,10 @@ Your year in code, wrapped. Visualize your git history and Claude Code usage in 
 
 ```bash
 # Run directly with npx (no install needed)
-npx cc-wrapped
+npx @lensin3-npm/cc-wrapped
 
 # Or install globally
-npm install -g cc-wrapped
+npm install -g @lensin3-npm/cc-wrapped
 ```
 
 ## Usage
