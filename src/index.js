@@ -555,48 +555,66 @@ function generateGitSections(stats) {
 }
 
 function generateTokenSections(stats) {
-  const maxTokens = Math.max(stats.outputTokens, stats.inputTokens, stats.cacheReadTokens / 100, stats.cacheCreationTokens / 10) || 1;
+  const hasBreakdown = stats.outputTokens > 0 || stats.inputTokens > 0 || stats.cacheReadTokens > 0;
 
+  if (hasBreakdown) {
+    const maxTokens = Math.max(stats.outputTokens, stats.inputTokens, stats.cacheReadTokens / 100, stats.cacheCreationTokens / 10) || 1;
+
+    return `
+      <div class="card">
+        <h2>Token Breakdown</h2>
+        <div class="bar-chart">
+          <div class="bar-row">
+            <div class="bar-label" style="width: 120px;">Output</div>
+            <div class="bar-container">
+              <div class="bar purple" style="width: ${Math.min((stats.outputTokens / maxTokens) * 100, 100)}%;"></div>
+            </div>
+            <div class="bar-value">${formatNumber(stats.outputTokens)}</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label" style="width: 120px;">Input</div>
+            <div class="bar-container">
+              <div class="bar pink" style="width: ${Math.min((stats.inputTokens / maxTokens) * 100, 100)}%;"></div>
+            </div>
+            <div class="bar-value">${formatNumber(stats.inputTokens)}</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label" style="width: 120px;">Cache Read</div>
+            <div class="bar-container">
+              <div class="bar blue" style="width: 100%;"></div>
+            </div>
+            <div class="bar-value">${formatNumber(stats.cacheReadTokens)}</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label" style="width: 120px;">Cache Created</div>
+            <div class="bar-container">
+              <div class="bar green" style="width: ${Math.min((stats.cacheCreationTokens / stats.cacheReadTokens) * 100, 100)}%;"></div>
+            </div>
+            <div class="bar-value">${formatNumber(stats.cacheCreationTokens)}</div>
+          </div>
+        </div>
+        ${stats.mostActiveDay ? `
+          <div class="highlight-box">
+            <div class="label">Most Active Day</div>
+            <div class="value">${stats.mostActiveDay.date} - ${formatNumber(stats.mostActiveDay.messages)} messages!</div>
+          </div>
+        ` : ''}
+        <p style="text-align: center; color: #888; font-size: 0.9rem; margin-top: 15px;">Powered by ${stats.modelName}</p>
+      </div>
+    `;
+  }
+
+  // No breakdown available - show simplified view
   return `
     <div class="card">
-      <h2>Token Breakdown</h2>
-      <div class="bar-chart">
-        <div class="bar-row">
-          <div class="bar-label" style="width: 120px;">Output</div>
-          <div class="bar-container">
-            <div class="bar purple" style="width: ${Math.min((stats.outputTokens / maxTokens) * 100, 100)}%;"></div>
-          </div>
-          <div class="bar-value">${formatNumber(stats.outputTokens)}</div>
-        </div>
-        <div class="bar-row">
-          <div class="bar-label" style="width: 120px;">Input</div>
-          <div class="bar-container">
-            <div class="bar pink" style="width: ${Math.min((stats.inputTokens / maxTokens) * 100, 100)}%;"></div>
-          </div>
-          <div class="bar-value">${formatNumber(stats.inputTokens)}</div>
-        </div>
-        <div class="bar-row">
-          <div class="bar-label" style="width: 120px;">Cache Read</div>
-          <div class="bar-container">
-            <div class="bar blue" style="width: 100%;"></div>
-          </div>
-          <div class="bar-value">${formatNumber(stats.cacheReadTokens)}</div>
-        </div>
-        <div class="bar-row">
-          <div class="bar-label" style="width: 120px;">Cache Created</div>
-          <div class="bar-container">
-            <div class="bar green" style="width: ${Math.min((stats.cacheCreationTokens / stats.cacheReadTokens) * 100, 100)}%;"></div>
-          </div>
-          <div class="bar-value">${formatNumber(stats.cacheCreationTokens)}</div>
-        </div>
-      </div>
+      <h2>Claude Code Stats</h2>
       ${stats.mostActiveDay ? `
         <div class="highlight-box">
           <div class="label">Most Active Day</div>
           <div class="value">${stats.mostActiveDay.date} - ${formatNumber(stats.mostActiveDay.messages)} messages!</div>
         </div>
       ` : ''}
-      <p style="text-align: center; color: #a0aec0; font-size: 0.9rem; margin-top: 15px;">Powered by ${stats.modelName}</p>
+      <p style="text-align: center; color: #888; font-size: 0.9rem; margin-top: 15px;">Powered by ${stats.modelName}</p>
     </div>
   `;
 }
