@@ -191,9 +191,9 @@ function formatNumber(num) {
 
 // Generate HTML
 function generateHTML(gitStats, claudeStats, options) {
-  const { tokensOnly, gitOnly, year } = options;
+  const { tokensOnly, gitOnly, year, repoName } = options;
 
-  const title = tokensOnly ? 'Claude Code' : (gitStats?.repoName || 'Your Code');
+  const title = repoName || gitStats?.repoName || 'Your Code';
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -334,7 +334,7 @@ function generateHTML(gitStats, claudeStats, options) {
         <div class="header">
             <h1>${title}</h1>
             <div class="year">${year}</div>
-            <div class="subtitle">${tokensOnly ? 'Your Claude Code Usage' : 'Your Year in Code'}</div>
+            <div class="subtitle">${tokensOnly ? 'Claude Code Usage' : (gitOnly ? 'Git Stats' : 'Your Year in Code')}</div>
         </div>
 
         ${generateBigNumbers(gitStats, claudeStats, options)}
@@ -595,6 +595,14 @@ function getFooterMessage(gitStats, claudeStats, options) {
   return `From first commit to production - what a journey!`;
 }
 
+// Get repo name without full git stats
+function getRepoName() {
+  if (isGitRepo()) {
+    return path.basename(process.cwd());
+  }
+  return null;
+}
+
 // Main function
 async function generateWrapped(options) {
   const { tokensOnly, gitOnly, year, outputPath, openBrowser } = options;
@@ -603,6 +611,7 @@ async function generateWrapped(options) {
 
   let gitStats = null;
   let claudeStats = null;
+  let repoName = getRepoName();
 
   // Get git stats if needed
   if (!tokensOnly) {
@@ -636,7 +645,7 @@ async function generateWrapped(options) {
 
   // Generate HTML
   console.log('✨ Generating wrapped...');
-  const html = generateHTML(gitStats, claudeStats, options);
+  const html = generateHTML(gitStats, claudeStats, { ...options, repoName });
 
   // Write file
   const fullPath = path.resolve(outputPath);
