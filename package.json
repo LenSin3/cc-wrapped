@@ -1,0 +1,34 @@
+{
+  "name": "cc-wrapped",
+  "version": "1.0.0",
+  "description": "Your year in code, wrapped. Visualize your git history and Claude Code usage in a beautiful shareable format.",
+  "main": "src/index.js",
+  "bin": {
+    "cc-wrapped": "./bin/cc-wrapped.js"
+  },
+  "scripts": {
+    "start": "node bin/cc-wrapped.js"
+  },
+  "keywords": [
+    "git",
+    "wrapped",
+    "claude",
+    "claude-code",
+    "year-in-review",
+    "developer-tools",
+    "cli"
+  ],
+  "author": "Leonard Paul-Kamara",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^12.0.0",
+    "open": "^10.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/cc-wrapped"
+  }
+}
